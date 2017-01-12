@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DXSample10.Annotations;
 
@@ -17,14 +18,17 @@ namespace DXSample10
             }
         }
 
-        private PopupItem _selectedItem;
+        private object _selectedItem;
 
-        public PopupItem SelectedItem
+        public object SelectedItem
         {
             get { return _selectedItem; }
             set
             {
+                if (_selectedItem == value)
+                    return;
                 _selectedItem = value;
+                NotifySelectionChanged(value);
                 NotifyPropertyChanged();
             }
         }
@@ -36,6 +40,13 @@ namespace DXSample10
         protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event EventHandler<object> SelectionChanged;
+
+        protected virtual void NotifySelectionChanged(object newValue)
+        {
+            SelectionChanged?.Invoke(this, newValue);
         }
     }
 }
